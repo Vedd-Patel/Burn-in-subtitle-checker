@@ -1,3 +1,4 @@
+import pytest
 from subtitle_mismatch_tool.compare import compute_similarity
 
 
@@ -10,7 +11,7 @@ def test_compute_similarity_handles_empty_cases():
 
     output = compute_similarity(segments, threshold=0.75)
 
-    assert output[0]["score"] == 1.0
+    assert output[0]["score"] == pytest.approx(1.0)
     assert output[0]["flagged"] is False
     assert output[0]["status"] == "OK"
 
@@ -31,7 +32,7 @@ def test_compute_similarity_scores_non_empty_text():
 
     output = compute_similarity(segments, threshold=0.90)
 
-    assert output[0]["score"] == 1.0
+    assert output[0]["score"] == pytest.approx(1.0)
     assert output[0]["flagged"] is False
     assert output[0]["status"] == "OK"
 
