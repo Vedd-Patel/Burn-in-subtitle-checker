@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subtitle Mismatch Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 24px; background: #F4F5F7; color: #1F2937; font-family: 'Noto Sans', 'Arial Unicode MS', sans-serif;">
+    <h1 style="margin: 0 0 16px 0; font-size: 28px;">Audio-Subtitle Mismatch Report</h1>
+
+    <section style="background: #ECEFF3; border: 1px solid #D1D5DB; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+        <p style="margin: 0 0 6px 0;"><strong>Video:</strong> {{ video_filename }}</p>
+        <p style="margin: 0 0 6px 0;"><strong>Generated at:</strong> {{ generated_at }}</p>
+        <p style="margin: 0 0 6px 0;"><strong>Total segments analyzed:</strong> {{ total_count }}</p>
+        <p style="margin: 0 0 6px 0;"><strong>Flagged for review:</strong> {{ flagged_count }}</p>
+        <p style="margin: 0;"><strong>Threshold:</strong> {{ "%.2f"|format(threshold) }}</p>
+    </section>
+
+    <table style="width: 100%; border-collapse: collapse; background: #FFFFFF;">
+        <thead>
+            <tr style="background: #E5E7EB;">
+                <th style="text-align: left; padding: 10px; border: 1px solid #D1D5DB;">Timestamp</th>
+                <th style="text-align: left; padding: 10px; border: 1px solid #D1D5DB;">Audio Text</th>
+                <th style="text-align: left; padding: 10px; border: 1px solid #D1D5DB;">Subtitle Text</th>
+                <th style="text-align: left; padding: 10px; border: 1px solid #D1D5DB;">Match Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for segment in segments %}
+            {% if segment.score is none %}
+            {% set row_background = "#F8D7DA" %}
+            {% elif segment.flagged %}
+            {% set row_background = "#FFF3CD" %}
+            {% else %}
+            {% set row_background = "#FFFFFF" %}
+            {% endif %}
+            <tr style="background: {{ row_background }};">
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">{{ ((segment.start + segment.end) / 2) | round(1) }}s</td>
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">{{ segment.text }}</td>
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">{{ segment.subtitle_text }}</td>
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">
+                    {% if segment.score is none %}
+                    N/A (empty text)
+                    {% elif segment.flagged %}
+                    {{ "%.2f"|format(segment.score) }} &mdash; REVIEW
+                    {% else %}
+                    {{ "%.2f"|format(segment.score) }} &mdash; OK
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p style="margin-top: 14px; font-size: 13px; color: #4B5563;">
+        The threshold is the minimum similarity score considered a match. Rows marked REVIEW should be verified by a human reviewer because the audio and subtitle content may be out of sync or semantically inconsistent.
+    </p>
+</body>
+</html>
