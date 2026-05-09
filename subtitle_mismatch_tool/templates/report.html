@@ -1,230 +1,539 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subtitle Mismatch Report</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root[data-theme="light"] {
+            --bg-main: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+            --row-hover: #F1F5F9;
+            --ok-bg: #DCFCE7;
+            --ok-text: #166534;
+            --review-bg: #FEE2E2;
+            --review-text: #991B1B;
+            --empty-bg: #FEF9C3;
+            --empty-text: #854D0E;
+            --primary: #3B82F6;
+        }
+
+        :root[data-theme="dark"] {
+            --bg-main: #0F172A;
+            --bg-card: #1E293B;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --border: #334155;
+            --row-hover: #334155;
+            --ok-bg: rgba(22, 101, 52, 0.3);
+            --ok-text: #4ADE80;
+            --review-bg: rgba(153, 27, 27, 0.3);
+            --review-text: #F87171;
+            --empty-bg: rgba(133, 77, 14, 0.3);
+            --empty-text: #FACC15;
+            --primary: #60A5FA;
+        }
+
         body {
             margin: 0;
-            padding: 24px;
-            background: #FFFFFF;
-            color: #0F172A;
-            font-family: 'Noto Sans', 'Arial Unicode MS', sans-serif;
+            padding: 32px;
+            background: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s, color 0.3s;
         }
+
         .container {
-            max-width: 1280px;
+            max-width: 1400px;
             margin: 0 auto;
         }
+
+        /* Header & Controls */
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 24px;
+        }
+
         .title {
-            margin: 0 0 6px 0;
-            font-size: 40px;
-            font-weight: 600;
+            margin: 0 0 8px 0;
+            font-size: 32px;
+            font-weight: 700;
             letter-spacing: -0.02em;
         }
+
         .subtitle {
-            margin: 0 0 18px 0;
-            color: #475569;
-            font-size: 16px;
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 14px;
         }
-        .summary-card {
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 14px;
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-family: 'Inter';
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary);
+        }
+
+        /* Video Player */
+        .video-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+            margin-bottom: 24px;
+            display: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
-        .summary-card p {
-            margin: 0 0 6px 0;
+
+        video {
+            width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            background: #000;
         }
+
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
         }
+
         .stat-card {
-            border: 1px solid #E2E8F0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 14px;
-            background: #FFFFFF;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
+
         .stat-label {
             margin: 0;
             font-size: 13px;
-            color: #64748B;
-        }
-        .stat-value {
-            margin: 6px 0 0 0;
-            font-size: 28px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             font-weight: 600;
         }
-        .table-wrap {
-            border: 1px solid #E2E8F0;
-            border-radius: 12px;
-            overflow: hidden;
-            background: #FFFFFF;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+
+        .stat-value {
+            margin: 8px 0 0 0;
+            font-size: 36px;
+            font-weight: 700;
         }
+
+        /* Toolbar (Search & Filters) */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .search-bar {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-family: 'Inter';
+            width: 300px;
+            font-size: 14px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--text-main);
+            color: var(--bg-main);
+            border-color: var(--text-main);
+        }
+
+        /* Table */
+        .table-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-        }
-        thead tr {
-            background: #F8FAFC;
-        }
-        th {
             text-align: left;
-            font-size: 14px;
-            color: #475569;
-            letter-spacing: 0.02em;
-            padding: 12px;
-            border-bottom: 1px solid #E2E8F0;
         }
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #E2E8F0;
-            vertical-align: top;
-            font-size: 16px;
+
+        thead {
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+            z-index: 10;
+            box-shadow: 0 1px 0 var(--border);
         }
-        .row-empty {
-            background: #FFF1F2;
-        }
-        .row-flagged {
-            background: #FFFBEB;
-        }
-        .row-ok {
-            background: #F8FFFB;
-        }
-        .mono {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            font-size: 14px;
-            color: #334155;
-        }
-        .status {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 999px;
-            font-weight: 600;
+
+        th {
+            padding: 16px;
             font-size: 12px;
-            letter-spacing: 0.01em;
-        }
-        .status-ok {
-            background: #DCFCE7;
-            color: #166534;
-        }
-        .status-review {
-            background: #FEE2E2;
-            color: #B91C1C;
-        }
-        .score-pill {
-            display: inline-block;
-            min-width: 90px;
-            text-align: center;
-            padding: 4px 8px;
-            border-radius: 8px;
-            background: #F1F5F9;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
             font-weight: 600;
         }
-        .footer {
-            margin-top: 14px;
-            font-size: 14px;
-            color: #475569;
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 15px;
+            vertical-align: middle;
+        }
+
+        .row-clickable {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .row-clickable:hover td {
+            background: var(--row-hover) !important;
+        }
+
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Badges & Progress */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .badge-ok {
+            background: var(--ok-bg);
+            color: var(--ok-text);
+        }
+
+        .badge-review {
+            background: var(--review-bg);
+            color: var(--review-text);
+        }
+
+        .badge-empty {
+            background: var(--empty-bg);
+            color: var(--empty-text);
+        }
+
+        .score-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 120px;
+        }
+
+        .score-bar-bg {
+            flex-grow: 1;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .score-bar-fill.is-review {
+            background-color: var(--review-text);
+        }
+
+        .score-bar-fill.is-ok {
+            background-color: var(--ok-text);
+        }
+
+        .score-text {
+            font-weight: 600;
+            font-size: 13px;
+            width: 35px;
+            text-align: right;
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <h1 class="title">Audio-Subtitle Mismatch Report</h1>
-    <p class="subtitle">Threshold: {{ "%.2f"|format(threshold) }} · Input: {{ video_filename }} · Generated: {{ generated_at }}</p>
+    <div class="container">
+        <div class="header-flex">
+            <div>
+                <h1 class="title">Audio-Subtitle Alignment Report</h1>
+                <p class="subtitle">File: <strong>{{ video_filename }}</strong> &nbsp;|&nbsp; Threshold: <strong>{{
+                        "%.2f"|format(threshold) }}</strong> &nbsp;|&nbsp; Generated: {{ generated_at }}</p>
+            </div>
+            <div class="action-buttons">
+                <label for="videoLoader" class="theme-toggle">Load Local Video for QA</label>
+                <input type="file" id="videoLoader" accept="video/mp4,video/webm,video/quicktime" style="display: none;" onchange="initVideoPlayer(event)">
+                
+                <button class="theme-toggle" onclick="exportToCSV()">Export CSV</button>
+                <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark Mode</button>
+            </div>
+        </div>
 
-    <section class="summary-card">
-        <p><strong>Video:</strong> {{ video_filename }}</p>
-        <p><strong>Total segments analyzed:</strong> {{ total_count }}</p>
-        <p><strong>Flagged for review:</strong> {{ flagged_count }}</p>
-        <p><strong>Threshold:</strong> {{ "%.2f"|format(threshold) }}</p>
-    </section>
+        <div class="video-section" id="videoContainer">
+            <video id="qaVideo" controls></video>
+        </div>
 
-    <section class="stats-grid">
-        <div class="stat-card">
-            <p class="stat-label">Total Segments</p>
-            <p class="stat-value">{{ total_count }}</p>
-        </div>
-        <div class="stat-card">
-            <p class="stat-label">Flagged for Review</p>
-            <p class="stat-value" style="color: #B91C1C;">{{ flagged_count }}</p>
-        </div>
-        <div class="stat-card">
-            <p class="stat-label">OK</p>
-            <p class="stat-value" style="color: #166534;">{{ ok_count }}</p>
-        </div>
-        <div class="stat-card">
-            <p class="stat-label">Average Similarity</p>
-            <p class="stat-value">{{ "%.0f"|format(average_similarity * 100) }}%</p>
-        </div>
-        <div class="stat-card">
-            <p class="stat-label">Missing Subtitles</p>
-            <p class="stat-value">{{ missing_subtitles }}</p>
-        </div>
-        <div class="stat-card">
-            <p class="stat-label">Missing Speech</p>
-            <p class="stat-value">{{ missing_speech }}</p>
-        </div>
-    </section>
+        <section class="stats-grid">
+            <div class="stat-card">
+                <p class="stat-label">Total Segments</p>
+                <p class="stat-value">{{ total_count }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Needs Review</p>
+                <p class="stat-value" style="color: var(--review-text);">{{ flagged_count }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Perfect / OK</p>
+                <p class="stat-value" style="color: var(--ok-text);">{{ ok_count }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Avg Similarity</p>
+                <p class="stat-value">{{ "%.0f"|format(average_similarity * 100) }}%</p>
+            </div>
+        </section>
 
-    <section class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>TIMESTAMP</th>
-                    <th>AUDIO TEXT</th>
-                    <th>SUBTITLE TEXT</th>
-                    <th>SCORE</th>
-                    <th>STATUS</th>
-                    <th>REASON</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for segment in segments %}
-                {% if segment.score is none %}
-                <tr class="row-empty">
-                {% elif segment.flagged %}
-                <tr class="row-flagged">
-                {% else %}
-                <tr class="row-ok">
-                {% endif %}
-                    <td class="mono">{{ ((segment.start + segment.end) / 2) | round(1) }}s</td>
-                    <td>{{ segment.text if segment.text else "(no speech)" }}</td>
-                    <td>{{ segment.subtitle_text if segment.subtitle_text else "(no subtitle)" }}</td>
-                    <td>
-                        {% if segment.score is none %}
-                        <span class="score-pill">N/A</span>
-                        {% else %}
-                        <span class="score-pill">{{ "%.2f"|format(segment.score) }}</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if segment.flagged %}
-                        <span class="status status-review">REVIEW</span>
-                        {% else %}
-                        <span class="status status-ok">OK</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ segment.reason if segment.reason else ("empty text" if segment.score is none else "scored") }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </section>
+        <div class="toolbar">
+            <input type="text" class="search-bar" id="searchInput" placeholder="Search transcript or subtitle..."
+                onkeyup="filterTable()">
+            <div class="filters">
+                <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+                <button class="filter-btn" onclick="setFilter('REVIEW', this)">Review Only</button>
+                <button class="filter-btn" onclick="setFilter('OK', this)">OK Only</button>
+                <button class="filter-btn" onclick="setFilter('MISSING', this)">Missing Data</button>
+            </div>
+        </div>
 
-    <p class="footer">
-        The threshold is the minimum similarity score considered a match. Rows marked REVIEW should be verified by a human reviewer because audio and subtitle text may be misaligned or semantically different.
-    </p>
-</div>
+        <section class="table-wrap">
+            <table id="reportTable">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th style="width: 30%">Audio Text</th>
+                        <th style="width: 30%">Subtitle Text</th>
+                        <th>Similarity</th>
+                        <th>Status</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for segment in segments %}
+                    <tr class="row-clickable" onclick="jumpToTime({{ ((segment.start + segment.end) / 2) | round(2) }})"
+                        data-status="{% if segment.score is none %}MISSING{% elif segment.flagged %}REVIEW{% else %}OK{% endif %}">
+                        <td class="mono">
+                            {{ ((segment.start + segment.end) / 2) | round(1) }}s
+                            {% if segment.speed_warning %}<br><span style="font-size: 10px; color: #D97706; font-weight: bold;">FAST ({{ "%.1f"|format(segment.cps) }} CPS)</span>{% endif %}
+                        </td>
+                        <td class="searchable">
+                            {{ segment.text_diff | safe if segment.text_diff else segment.text if segment.text else "(no speech)" }}
+                        </td>
+                        <td class="searchable">
+                            {{ segment.subtitle_diff | safe if segment.subtitle_diff else segment.subtitle_text if segment.subtitle_text else "(no subtitle)" }}
+                        </td>
+
+                        <td>
+                            <div class="score-container">
+                                {% if segment.score is none %}
+                                <span class="badge badge-empty">N/A</span>
+                                {% else %}
+                                {% set pct = (segment.score * 100) | round | int %}
+                                <div class="score-bar-bg">
+                                    <div class="score-bar-fill {% if segment.flagged %}is-review{% else %}is-ok{% endif %}"
+                                        style="width: {{ pct }}%;">
+                                    </div>
+                                </div>
+                                <span class="score-text">{{ "%.2f"|format(segment.score) }}</span>
+                                {% endif %}
+                            </div>
+                        </td>
+
+                        <td>
+                            {% if segment.score is none %}
+                            <span class="badge badge-empty">REVIEW</span>
+                            {% elif segment.flagged %}
+                            <span class="badge badge-review">REVIEW</span>
+                            {% else %}
+                            <span class="badge badge-ok">OK</span>
+                            {% endif %}
+                        </td>
+                        <td style="color: var(--text-muted); font-size: 13px;">{{ segment.reason }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script>
+        // Theme Toggle Logic
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+
+        // Video Player Logic
+        function initVideoPlayer(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const videoNode = document.getElementById('qaVideo');
+            const fileURL = URL.createObjectURL(file);
+            videoNode.src = fileURL;
+            document.getElementById('videoContainer').style.display = 'block';
+        }
+
+        function jumpToTime(seconds) {
+            const videoNode = document.getElementById('qaVideo');
+            if (videoNode.src) {
+                videoNode.currentTime = parseFloat(seconds);
+                videoNode.play();
+                // Smooth scroll back to the video player
+                document.getElementById('videoContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                // If they click a row but haven't loaded a video, prompt them gently
+                const label = document.querySelector('label[for="videoLoader"]');
+                label.style.borderColor = "var(--primary)";
+                label.style.boxShadow = "0 0 0 3px rgba(59, 130, 246, 0.5)";
+                setTimeout(() => {
+                    label.style.borderColor = "var(--border)";
+                    label.style.boxShadow = "none";
+                }, 1500);
+            }
+        }
+
+        // Filter Logic
+        let currentFilter = 'all';
+
+        function setFilter(filterType, btnElement) {
+            currentFilter = filterType;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            applyFilters();
+        }
+
+        function filterTable() {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#reportTable tbody tr');
+
+            rows.forEach(row => {
+                const status = row.getAttribute('data-status');
+                const textContent = Array.from(row.querySelectorAll('.searchable'))
+                    .map(td => td.textContent.toLowerCase())
+                    .join(" ");
+
+                // UPGRADED FILTER LOGIC:
+                let matchesFilter = false;
+                if (currentFilter === 'all') {
+                    matchesFilter = true;
+                } else if (currentFilter === 'REVIEW') {
+                    // "Review Only" now includes both standard reviews AND missing data
+                    matchesFilter = (status === 'REVIEW' || status === 'MISSING');
+                } else {
+                    matchesFilter = (status === currentFilter);
+                }
+
+                const matchesSearch = textContent.includes(searchQuery);
+
+                if (matchesFilter && matchesSearch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Export to CSV Logic
+        function exportToCSV() {
+            const rows = document.querySelectorAll('#reportTable tbody tr');
+            let csvContent = "Timestamp,Audio Text,Subtitle Text,Similarity,Status\n";
+
+            rows.forEach(row => {
+                if (row.style.display !== 'none') {
+                    const cols = row.querySelectorAll('td');
+                    if (cols.length > 0) {
+                        const time = cols[0].innerText.split('\n')[0]; // Clean up the time if there's a CPS warning
+                        const audio = `"${cols[1].innerText.replace(/"/g, '""')}"`;
+                        const sub = `"${cols[2].innerText.replace(/"/g, '""')}"`;
+                        const score = cols[3].innerText.replace(/\n/g, '').trim();
+                        const status = cols[4].innerText.trim();
+                        csvContent += `${time},${audio},${sub},${score},${status}\n`;
+                    }
+                }
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "mismatch_report.csv";
+            link.click();
+        }
+    </script>
 </body>
 </html>

@@ -31,7 +31,8 @@ def test_generate_report_writes_html(tmp_path):
     assert output_path.exists()
     with open(output_path, "r", encoding="utf-8") as report_file:
         html = report_file.read()
-    assert "Audio-Subtitle Mismatch Report" in html
+
+    assert "Audio-Subtitle Alignment Report" in html
     assert "demo_clip.mp4" in html
     assert "REVIEW" in html
     assert "OK" in html
