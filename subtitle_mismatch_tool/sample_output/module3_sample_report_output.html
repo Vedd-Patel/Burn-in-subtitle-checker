@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subtitle Mismatch Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 24px; background: #F4F5F7; color: #1F2937; font-family: 'Noto Sans', 'Arial Unicode MS', sans-serif;">
+    <h1 style="margin: 0 0 16px 0; font-size: 28px;">Audio-Subtitle Mismatch Report</h1>
+
+    <section style="background: #ECEFF3; border: 1px solid #D1D5DB; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+        <p style="margin: 0 0 6px 0;"><strong>Video:</strong> demo_clip.mp4</p>
+        <p style="margin: 0 0 6px 0;"><strong>Generated at:</strong> 2026-05-09 12:50:24</p>
+        <p style="margin: 0 0 6px 0;"><strong>Total segments analyzed:</strong> 3</p>
+        <p style="margin: 0 0 6px 0;"><strong>Flagged for review:</strong> 1</p>
+        <p style="margin: 0;"><strong>Threshold:</strong> 0.75</p>
+    </section>
+
+    <table style="width: 100%; border-collapse: collapse; background: #FFFFFF;">
+        <thead>
+            <tr style="background: #E5E7EB;">
+                <th style="text-align: left; padding: 10px; border: 1px solid #D1D5DB;">Timestamp</th>
+                <th style="text-align: left; padding: 10px; border: 1px solid #D1D5DB;">Audio Text</th>
+                <th style="text-align: left; padding: 10px; border: 1px solid #D1D5DB;">Subtitle Text</th>
+                <th style="text-align: left; padding: 10px; border: 1px solid #D1D5DB;">Match Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            
+            <tr style="background-color: #FFFFFF;">
+            
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">10.2s</td>
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">वो कहाँ गई थी</td>
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">वो कहाँ गया था</td>
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">
+                    
+                    0.81 &mdash; OK
+                    
+                </td>
+            </tr>
+            
+            
+            <tr style="background-color: #FFFFFF;">
+            
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">45.7s</td>
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">ठीक है भाई</td>
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">ठीक है भाई</td>
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">
+                    
+                    1.00 &mdash; OK
+                    
+                </td>
+            </tr>
+            
+            
+            <tr style="background-color: #F8D7DA;">
+            
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">61.4s</td>
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;"></td>
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">जारी है</td>
+                <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">
+                    
+                    N/A (empty text)
+                    
+                </td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+    <p style="margin-top: 14px; font-size: 13px; color: #4B5563;">
+        The threshold is the minimum similarity score considered a match. Rows marked REVIEW should be verified by a human reviewer because the audio and subtitle content may be out of sync or semantically inconsistent.
+    </p>
+</body>
+</html>

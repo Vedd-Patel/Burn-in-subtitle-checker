@@ -1,0 +1,32 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Tooling caches
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# OS/editor files
+.DS_Store
+.vscode/
+.idea/
+
+# Generated artifacts
+*.html
+!subtitle_mismatch_tool/templates/report.html
+!subtitle_mismatch_tool/sample_output/module3_sample_report_output.html
+
+# Local media samples
+*.mp4
+*.mkv
+*.avi
+*.mov
+*.mp3
+*.wav

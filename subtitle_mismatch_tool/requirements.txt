@@ -1,0 +1,4 @@
+# This focused demo only uses Module 3 dependencies.
+# If you expand to full ASR/OCR pipeline later, install Whisper, OpenCV, pytesseract, and torch separately.
+rapidfuzz>=3.0.0
+Jinja2>=3.1.0

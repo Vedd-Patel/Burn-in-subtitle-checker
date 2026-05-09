@@ -1,15 +1,18 @@
 import argparse
+import json
 import os
 import sys
 
-from subtitle_mismatch_tool.compare import compute_similarity
-from subtitle_mismatch_tool.extract_subtitles import extract_subtitle_text
-from subtitle_mismatch_tool.report import generate_report
-from subtitle_mismatch_tool.transcribe import transcribe_audio
+try:
+    from subtitle_mismatch_tool.compare import compute_similarity
+    from subtitle_mismatch_tool.report import generate_report
+except ImportError:
+    from compare import compute_similarity
+    from report import generate_report
 
 
 def build_parser():
-    """Create and return the command-line argument parser.
+    """Build the CLI parser for Module 3 demo execution.
 
     Parameters:
         None.
@@ -18,23 +21,22 @@ def build_parser():
         Configured ArgumentParser instance.
     """
     parser = argparse.ArgumentParser(
-        description="Flag likely mismatches between spoken audio and burned-in subtitles."
+        description="Run Module 3 demo: mismatch detection and HTML report generation."
     )
     parser.add_argument(
-        "video",
-        help="Path to the video file to analyze. MP4, MKV, AVI, and MOV are supported.",
+        "segments_json",
+        help="Path to JSON containing timed segments with text and subtitle_text fields.",
     )
     parser.add_argument(
-        "--model",
-        default="small",
-        choices=["tiny", "base", "small", "medium", "large"],
-        help="Whisper model size. Larger models are more accurate but slower. The small model works well for Hindi and Kannada without requiring a GPU.",
+        "--video-name",
+        default="demo_clip.mp4",
+        help="Video filename label shown in the generated report.",
     )
     parser.add_argument(
         "--threshold",
         default=0.75,
         type=float,
-        help="Similarity score below which a segment is flagged for review. Value between 0.0 and 1.0. Lower values flag only obvious mismatches, higher values catch subtle ones at the cost of more false positives.",
+        help="Similarity score below which a segment is flagged for review. Value between 0.0 and 1.0.",
     )
     parser.add_argument(
         "--output",
@@ -44,8 +46,28 @@ def build_parser():
     return parser
 
 
+def _load_segments(path):
+    """Load segments from a JSON file and ensure it is a list.
+
+    Parameters:
+        path: File path for the segments JSON file.
+
+    Returns:
+        Segment list loaded from JSON.
+    """
+    if not os.path.exists(path):
+        raise FileNotFoundError(path)
+
+    with open(path, "r", encoding="utf-8") as input_file:
+        loaded = json.load(input_file)
+
+    if not isinstance(loaded, list):
+        raise ValueError("Input JSON must be a list of segment objects.")
+    return loaded
+
+
 def main():
-    """Run the audio-subtitle mismatch detection pipeline from the CLI.
+    """Run the Module 3 demo pipeline from the command line.
 
     Parameters:
         None.
@@ -57,29 +79,24 @@ def main():
     args = parser.parse_args()
 
     try:
-        print("[1/4] Transcribing audio with Whisper...")
-        segments = transcribe_audio(args.video, model_size=args.model)
-        print(f"Found {len(segments)} segments from audio transcription.")
+        print("[1/3] Loading segment input...")
+        segments = _load_segments(args.segments_json)
+        print(f"Loaded {len(segments)} segments.")
 
-        print("[2/4] Extracting subtitle text with OCR...")
-        segments = extract_subtitle_text(args.video, segments)
-        print(f"Processed {len(segments)} frames for subtitle OCR.")
-
-        print("[3/4] Computing similarity scores...")
+        print("[2/3] Computing similarity scores...")
         segments = compute_similarity(segments, threshold=args.threshold)
 
-        print("[4/4] Generating HTML report...")
-        video_filename = os.path.basename(args.video)
+        print("[3/3] Generating HTML report...")
         generate_report(
             segments=segments,
             output_path=args.output,
-            video_filename=video_filename,
+            video_filename=args.video_name,
             threshold=args.threshold,
         )
         print(f"Report saved to: {args.output}")
 
-        total_segments = len(segments)
         flagged_segments = sum(1 for segment in segments if segment.get("flagged"))
+        total_segments = len(segments)
         flagged_percentage = (flagged_segments / total_segments * 100.0) if total_segments else 0.0
         print(
             f"Summary: {total_segments} segments analyzed, {flagged_segments} flagged ({flagged_percentage:.1f}%)."

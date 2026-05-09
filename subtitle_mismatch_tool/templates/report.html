@@ -31,13 +31,12 @@
         <tbody>
             {% for segment in segments %}
             {% if segment.score is none %}
-            {% set row_background = "#F8D7DA" %}
+            <tr style="background-color: #F8D7DA;">
             {% elif segment.flagged %}
-            {% set row_background = "#FFF3CD" %}
+            <tr style="background-color: #FFF3CD;">
             {% else %}
-            {% set row_background = "#FFFFFF" %}
+            <tr style="background-color: #FFFFFF;">
             {% endif %}
-            <tr style="background: {{ row_background }};">
                 <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">{{ ((segment.start + segment.end) / 2) | round(1) }}s</td>
                 <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">{{ segment.text }}</td>
                 <td style="padding: 10px; border: 1px solid #D1D5DB; vertical-align: top;">{{ segment.subtitle_text }}</td>
