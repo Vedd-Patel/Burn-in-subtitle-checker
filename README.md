@@ -13,6 +13,12 @@ This submission is a focused demo for PlanetRead DMP 2026 and implements **Modul
    - `subtitle_mismatch_tool/sample_output/module3_sample_segments_input.json`
 3. Corresponding sample output artifact:
    - `subtitle_mismatch_tool/sample_output/module3_sample_report_output.html`
+4. Unit tests:
+   - `tests/test_compare.py`
+   - `tests/test_report.py`
+   - `tests/test_main.py`
+5. CI workflow with security checks:
+   - `.github/workflows/tests.yml`
 
 ## Run the Demo
 
@@ -26,6 +32,16 @@ Run Module 3 on the sample input:
 
 ```bash
 python3 subtitle_mismatch_tool/main.py subtitle_mismatch_tool/sample_output/module3_sample_segments_input.json --video-name demo_clip.mp4 --threshold 0.75 --output mismatch_report.html
+```
+
+## Run Tests Locally
+
+```bash
+pip install -r subtitle_mismatch_tool/requirements.txt
+pip install pytest bandit pip-audit
+pytest -q
+bandit -q -r subtitle_mismatch_tool -x subtitle_mismatch_tool/sample_output
+pip-audit -r subtitle_mismatch_tool/requirements.txt
 ```
 
 ## Input Format
@@ -47,4 +63,4 @@ The input file must be a JSON list where each item has:
 
 1. Add optional semantic similarity scoring to reduce lexical false positives.
 2. Add confidence-weighted rules for empty-text edge cases.
-3. Add regression tests for multilingual normalization and score thresholds.
+3. Add richer row-level filters and search in the report view using a progressive enhancement script.

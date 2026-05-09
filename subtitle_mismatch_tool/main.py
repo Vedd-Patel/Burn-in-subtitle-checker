@@ -63,6 +63,12 @@ def _load_segments(path):
 
     if not isinstance(loaded, list):
         raise ValueError("Input JSON must be a list of segment objects.")
+    for index, segment in enumerate(loaded):
+        if not isinstance(segment, dict):
+            raise ValueError(f"Segment at index {index} is not a JSON object.")
+        for key_name in ["start", "end", "text", "subtitle_text"]:
+            if key_name not in segment:
+                raise ValueError(f"Segment at index {index} is missing required key '{key_name}'.")
     return loaded
 
 
@@ -79,6 +85,9 @@ def main():
     args = parser.parse_args()
 
     try:
+        if args.threshold < 0.0 or args.threshold > 1.0:
+            raise ValueError("Threshold must be between 0.0 and 1.0.")
+
         print("[1/3] Loading segment input...")
         segments = _load_segments(args.segments_json)
         print(f"Loaded {len(segments)} segments.")
