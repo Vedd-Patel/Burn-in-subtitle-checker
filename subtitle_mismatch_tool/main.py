@@ -25,7 +25,16 @@ def build_parser():
     )
     parser.add_argument(
         "segments_json",
-        help="Path to JSON containing timed segments with text and subtitle_text fields.",
+        help="Path to JSON containing timed segments with start, end, and text fields.",
+    )
+    parser.add_argument(
+        "--video-path",
+        default=None,
+        help=(
+            "Path to the source video file. If provided, Module 2 subtitle extraction runs before "
+            "Module 3. If omitted, subtitle_text must already be present in the input JSON "
+            "(Module 3-only mode, current behaviour)."
+        ),
     )
     parser.add_argument(
         "--video-name",
@@ -66,10 +75,28 @@ def _load_segments(path):
     for index, segment in enumerate(loaded):
         if not isinstance(segment, dict):
             raise ValueError(f"Segment at index {index} is not a JSON object.")
-        for key_name in ["start", "end", "text", "subtitle_text"]:
+        for key_name in ["start", "end", "text"]:
             if key_name not in segment:
                 raise ValueError(f"Segment at index {index} is missing required key '{key_name}'.")
     return loaded
+
+
+def _validate_subtitle_text(segments):
+    """Validate that each segment includes subtitle_text for Module 3-only mode.
+
+    Parameters:
+        segments: Segment list loaded from JSON.
+
+    Returns:
+        None.
+    """
+    for index, segment in enumerate(segments):
+        if "subtitle_text" not in segment:
+            raise ValueError(
+                "Segment at index "
+                f"{index} is missing required key 'subtitle_text'. "
+                "Provide --video-path to run Module 2 extraction first."
+            )
 
 
 def main():
@@ -91,6 +118,17 @@ def main():
         print("[1/3] Loading segment input...")
         segments = _load_segments(args.segments_json)
         print(f"Loaded {len(segments)} segments.")
+
+        if args.video_path:
+            try:
+                from subtitle_mismatch_tool.extract_subtitles import extract_subtitles
+            except ImportError:
+                from extract_subtitles import extract_subtitles
+
+            print("[1.5/3] Extracting burned-in subtitles via OCR...")
+            segments = extract_subtitles(args.video_path, segments)
+        else:
+            _validate_subtitle_text(segments)
 
         print("[2/3] Computing similarity scores...")
         segments = compute_similarity(segments, threshold=args.threshold)

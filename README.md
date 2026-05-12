@@ -65,3 +65,4 @@ The input file must be a JSON list where each item has:
 
 1. **Purely Lexical:** Similarity scoring is currently lexical and may still flag semantically equivalent paraphrases (e.g., changing tense). Future improvements could integrate a lightweight multilingual model (like `sentence-transformers`) for semantic validation.
 2. **Modular Isolation:** The demo assumes upstream transcription (Module 1) and OCR text (Module 2) are already extracted and available in the JSON format.
+3. **OCR Sensitivity:** Module 2 OCR accuracy is sensitive to subtitle font colour and video resolution. Pre-processing (grayscale + Otsu threshold + 2x upscale) is applied automatically. For very low-contrast subtitles, manual preprocessing may be needed.
